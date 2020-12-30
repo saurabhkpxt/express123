@@ -6,21 +6,35 @@ const sqlite3 = require("sqlite3").verbose();
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+const { stringify } = require("querystring");
 
 var app = express();
-let db = new sqlite3.Database("/data.sqlite", sqlite3.OPEN_READWRITE, (err) => {
-  if (err) {
-    console.error(err.message);
-  }
-  console.log("Connected to the chinook database.");
-});
-db.serialize(() => {
-  db.each("SHOW TABLES", (err, row) => {
+let db = new sqlite3.Database(
+  "./sqlite (2).db",
+  sqlite3.OPEN_READWRITE,
+  (err) => {
     if (err) {
       console.error(err.message);
     }
-    console.log(row + "\t");
-  });
+    console.log("Connected to the chinook database.");
+  }
+);
+db.serialize(() => {
+  db.each(
+    `SELECT 
+  name
+FROM 
+  sqlite_master 
+WHERE 
+  type ='table' AND 
+  name NOT LIKE 'sqlite_%';`,
+    (err, row) => {
+      if (err) {
+        console.error(err.message);
+      }
+      console.log(row.name + "\t");
+    }
+  );
 });
 
 app.use(logger("dev"));
