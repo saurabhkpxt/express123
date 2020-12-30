@@ -10,7 +10,7 @@ const { stringify } = require("querystring");
 
 var app = express();
 let db = new sqlite3.Database(
-  "./sqlite (2).db",
+  "./data (1).sqlite",
   sqlite3.OPEN_READWRITE,
   (err) => {
     if (err) {
@@ -20,21 +20,14 @@ let db = new sqlite3.Database(
   }
 );
 db.serialize(() => {
-  db.each(
-    `SELECT 
-  name
-FROM 
-  sqlite_master 
-WHERE 
-  type ='table' AND 
-  name NOT LIKE 'sqlite_%';`,
-    (err, row) => {
-      if (err) {
-        console.error(err.message);
-      }
-      console.log(row.name + "\t");
+  db.each(`SELECT * FROM 'Tyre Details_tyre_details' ;`, (err, row) => {
+    if (err) {
+      console.error(err.message);
     }
-  );
+    for (x in row) {
+      console.log(x + " " + row[x]);
+    }
+  });
 });
 
 app.use(logger("dev"));
