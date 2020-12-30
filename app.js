@@ -8,11 +8,19 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
 var app = express();
-let db = new sqlite3.Database(":memory:", (err) => {
+let db = new sqlite3.Database("/data.sqlite", sqlite3.OPEN_READWRITE, (err) => {
   if (err) {
-    return console.error(err.message);
+    console.error(err.message);
   }
-  console.log("Connected to the in-memory SQlite database.");
+  console.log("Connected to the chinook database.");
+});
+db.serialize(() => {
+  db.each("SHOW TABLES", (err, row) => {
+    if (err) {
+      console.error(err.message);
+    }
+    console.log(row + "\t");
+  });
 });
 
 app.use(logger("dev"));
